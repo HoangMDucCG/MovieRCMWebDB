@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHIMMOI</title>
+    <link rel="stylesheet" href="{% static 'movies/style.css' %}">
+</head> 
+<body>
+    <header class="site-header">
+    <div class="header-container">
+        <!-- 1. Logo -->
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <span class="logo-main">WEB</span><span class="logo-sub">PHIMMOI</span>
+            </a>
+        </div>
+        <form class="search-box" method="GET" action="{% url 'search' %}">
+            <span class="search-icon">SEARCH BOX: </span>
+            <input type="text" name="q" placeholder="Tìm phim...">
+        </form>
+
+        <nav class="header-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="{% url 'home' %}">
+                       TRANG CHỦ
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a href="#" class="dropbtn">THỂ LOẠI</a>
+                    <div class="dropdown-content">
+                        {% for the_loai in categories %}
+                            <a href="{% url 'the_loai' %}?ten={{ the_loai.name }}">{{ the_loai.name }}</a>
+                        {% endfor %}
+                     </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'phim_le' %}">
+                       PHIM LẺ
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'phim_bo' %}">
+                       PHIM BỘ
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'ngau_nhien' %}">NGẪU NHIÊN</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <button class="theme-toggle" title="Mode">Mode: Sáng</button>
+        </div>
+    </div>
+    </header>
+    <main>
+        {% if tieu_de_muc %}
+            <h2 style="margin-left: 20px; color: #f39c12; margin-top: 20px;">Phim thuộc thể loại: {{ tieu_de_muc }}</h2>
+        {% endif %}
+        <div class="movie-list-container">
+            <div class="movie-grid">
+            {% for movie in movies %}
+                <div class="movie-card">
+                <!-- Thẻ a bọc toàn bộ card, khi nhấn vào bất cứ đâu trong khung này cũng sẽ chuyển trang -->
+                <a href="{% url 'xem_series' movie.id %}" class="movie-card" style="text-decoration: none; color: inherit; display: block;">
+                    
+                    <img src="{{ movie.poster_image.url }}" alt="{{ movie.title }}" class="poster-img">
+
+                    <div class="movie-info">
+                        <h3>{{ movie.title }}</h3>
+                        <p>Lượt xem: {{ movie.views }}</p>
+                    </div>
+
+                </a>
+                </div>
+            {% endfor %}
+            </div>
+        </div>  
+    </main>
+    <script src="{% static 'js/BL_mode.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+/*bảng màu dark mode*/
+:root {
+    --bg-main: #121212;
+    --bg-card: #282828;
+    --text-main: #ffffff;
+    --text-muted: #b3b3b3;
+    --accent-color: #f1800f;
+}
+
+/* Bảng màu Light Mode */
+body.light-mode {
+    --bg-main: #f4f4f4;
+    --bg-card: #ffffff;
+    --text-main: #121212;
+    --text-muted: #666666;
+    --accent-color: #e67e22;
+}
+
+body.light-mode .site-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+}
+
+body.light-mode .search-box {
+    background-color: #e4e4e4;
+}
+
+body.light-mode .search-box input {
+    color: #121212;
+}
+
+body.light-mode .dropdown-content {
+    background-color: #ffffff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+body.light-mode .dropdown-content a:hover {
+    background-color: #f0f0f0;
+}
+
+body.light-mode .movie-card {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/*reset lại viền mặc định của web*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+/*HEADER*/
+.site-header {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 15px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.logo-main {
+    color: var(--text-main);
+}
+
+.logo-sub {
+    color: var(--accent-color);
+}
+
+/*search box*/
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    border-radius: 20px;
+    padding: 8px 30px;
+}
+
+.search-icon {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-right: 10px;
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    outline: none;
+    width: 250px;
+}
+
+/*thanh menu*/
+.nav-list {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-item a {
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.nav-item a:hover {
+    color: var(--accent-color);
+}
+
+/* Chỉnh Menu Thả Xuống (Dropdown Thể loại) */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--bg-card);
+    min-width: 150px;
+    top: 100%;
+    left: 0;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    border-radius: 8px;
+    z-index: 10;
+    padding: 10px 0;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.dropdown-content a:hover {
+    background-color: #444;
+    color: var(--accent-color);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Nút chuyển sáng/tối trên Header */
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.3s;
+    width: 110px;
+    text-align: center;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/*PHẦN DANH SÁCH PHIM*/
+.container {
+    padding: 40px 50px;
+}
+
+.poster-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px 10px 0 0;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+    gap: 25px;
+    margin-top: 20px;
+    align-items: start;
+}
+
+.movie-card {
+    background-color: var(--bg-card);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-8px);
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.movie-info {
+    padding: 15px;
+}
+
+.movie-title h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+.movie-info p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+.btn-play {
+    display: inline-block;
+    background-color: #444;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn-play:hover {
+    background-color: var(--accent-color);
+}
+body.light-mode .movie-info p {
+    color: #444444 !important;
+    font-weight: 500;
+}

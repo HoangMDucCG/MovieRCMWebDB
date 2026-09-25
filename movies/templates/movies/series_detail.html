@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ series.title }} - WebPHIMMOI</title>
+    <!-- Thêm ?v=999 để xóa cache -->
+    <link rel="stylesheet" href="{% static 'movies/series_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'movies/style.css' %}">
+</head>
+<body>
+    <!-- Thanh điều hướng gốc -->
+    <header class="site-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <span class="logo-main">WEB</span><span class="logo-sub">PHIMMOI</span>
+            </a>
+        </div>
+        <form class="search-box" method="GET" action="{% url 'search' %}">
+            <span class="search-icon">SEARCH BOX: </span>
+            <input type="text" name="q" placeholder="Tìm phim...">
+        </form>
+
+        <nav class="header-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="{% url 'home' %}">TRANG CHỦ</a></li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="dropbtn">THỂ LOẠI</a>
+                    <div class="dropdown-content">
+                        {% for the_loai in categories %}
+                            <a href="{% url 'the_loai' %}?ten={{ the_loai.name }}">{{ the_loai.name }}</a>
+                        {% endfor %}
+                     </div>
+                </li>
+                <li class="nav-item"><a href="{% url 'phim_le' %}">PHIM LẺ</a></li>
+                <li class="nav-item"><a href="{% url 'phim_bo' %}">PHIM BỘ</a></li>
+                <li class="nav-item"><a href="{% url 'ngau_nhien' %}">NGẪU NHIÊN</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <button class="theme-toggle" title="Mode">Mode: Sáng</button>
+        </div>
+    </div>
+    </header>
+
+    <main>
+        <div class="series-detail-container">
+            <div class="poster-box">
+                {% if series.poster_image %}
+                    <img src="{{ series.poster_image.url }}" alt="{{ series.title }}">
+                {% else %}
+                    <div class="poster-img" style="width: 100%; aspect-ratio: 2/3; background-color: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #888;">
+                    Chưa có ảnh bìa
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="info-box">
+                <h1>{{ series.title }}</h1>
+                <div class="views">Lượt xem: {{ series.views }}</div>
+                
+                <div class="desc">
+                    {% if series.description %}
+                        {{ series.description }}
+                    {% else %}
+                        Đang cập nhật nội dung...
+                    {% endif %}
+                </div>
+                
+                {% if tap_1 %}
+                    <a href="{% url 'xem_phim' tap_1.id %}" class="btn-play-large">▶ XEM NGAY</a>
+                {% else %}
+                    <span class="btn-play-large btn-disabled">Chưa có tập nào</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="episode-section">
+            <h2>Danh sách các tập</h2>
+            {% if danh_sach_tap %}
+                <div class="episode-grid">
+                    {% for tap in danh_sach_tap %}
+                        <a href="{% url 'xem_phim' tap.id %}" class="ep-btn">Tập {{ tap.tap_so }}</a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Đã xóa inline style tĩnh ở đây và thay bằng class -->
+                <p class="empty-msg">Bộ phim này hiện chưa cập nhật video.</p>
+            {% endif %}
+        </div>
+    </main>
+    <script src="{% static 'js/BL_mode.js' %}"></script>
+</body>
+</html>
