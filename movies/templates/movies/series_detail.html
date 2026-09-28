@@ -1,96 +1,382 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
     <title>{{ series.title }} - WebPHIMMOI</title>
-    <!-- Thêm ?v=999 để xóa cache -->
-    <link rel="stylesheet" href="{% static 'movies/series_detail.css' %}">
+
+    <!-- CSS chung -->
     <link rel="stylesheet" href="{% static 'movies/style.css' %}">
+
+    <!-- CSS riêng trang chi tiết -->
+    <link rel="stylesheet" href="{% static 'movies/series_detail.css' %}?v=3">
 </head>
+
 <body>
-    <!-- Thanh điều hướng gốc -->
-    <header class="site-header">
+
+<header class="site-header">
     <div class="header-container">
+
+        <!-- LOGO -->
         <div class="logo">
             <a href="{% url 'home' %}">
                 <span class="logo-main">WEB</span><span class="logo-sub">PHIMMOI</span>
             </a>
         </div>
-        <form class="search-box" method="GET" action="{% url 'search' %}">
-            <span class="search-icon">SEARCH BOX: </span>
-            <input type="text" name="q" placeholder="Tìm phim...">
-        </form>
 
+        <!-- SEARCH -->
+        <div class="search-wrapper" style="position: relative;">
+            <form class="search-box" method="GET" action="{% url 'search' %}">
+                <!-- Icon kính lúp SVG -->
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M10 2a8 8 0 016.32 12.9l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
+                </svg>
+                <input type="text" name="q" id="search-input" placeholder="Tìm kiếm phim..." autocomplete="off">
+            </form>
+
+            <!-- Khung xổ xuống (Mặc định ẩn) -->
+            <div id="search-dropdown" class="search-dropdown" style="display: none;">
+                <div class="dropdown-header">Danh sách phim</div>
+                <div id="search-results-list">
+                    <!-- Dữ liệu từ JavaScript sẽ được nhúng vào đây -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MENU -->
         <nav class="header-nav">
             <ul class="nav-list">
-                <li class="nav-item"><a href="{% url 'home' %}">TRANG CHỦ</a></li>
+
+                <li class="nav-item">
+                    <a href="{% url 'home' %}">TRANG CHỦ</a>
+                </li>
+
                 <li class="nav-item dropdown">
                     <a href="#" class="dropbtn">THỂ LOẠI</a>
+
                     <div class="dropdown-content">
                         {% for the_loai in categories %}
-                            <a href="{% url 'the_loai' %}?ten={{ the_loai.name }}">{{ the_loai.name }}</a>
+                            <a href="{% url 'the_loai' %}?ten={{ the_loai.name }}">
+                                {{ the_loai.name }}
+                            </a>
                         {% endfor %}
-                     </div>
+                    </div>
                 </li>
-                <li class="nav-item"><a href="{% url 'phim_le' %}">PHIM LẺ</a></li>
-                <li class="nav-item"><a href="{% url 'phim_bo' %}">PHIM BỘ</a></li>
-                <li class="nav-item"><a href="{% url 'ngau_nhien' %}">NGẪU NHIÊN</a></li>
+
+                <li class="nav-item">
+                    <a href="{% url 'phim_le' %}">PHIM LẺ</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'phim_bo' %}">PHIM BỘ</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'ngau_nhien' %}">NGẪU NHIÊN</a>
+                </li>
+
             </ul>
         </nav>
-        <div class="header-actions">
-            <button class="theme-toggle" title="Mode">Mode: Sáng</button>
-        </div>
-    </div>
-    </header>
 
-    <main>
-        <div class="series-detail-container">
-            <div class="poster-box">
-                {% if series.poster_image %}
-                    <img src="{{ series.poster_image.url }}" alt="{{ series.title }}">
-                {% else %}
-                    <div class="poster-img" style="width: 100%; aspect-ratio: 2/3; background-color: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #888;">
-                    Chưa có ảnh bìa
+        <!-- DARK / LIGHT MODE -->
+        <div class="header-actions">
+            <button class="theme-toggle" title="Mode">
+                Mode: Sáng
+            </button>
+        </div>
+
+    </div>
+</header>
+
+
+<!-- =========================
+     PHẦN CHI TIẾT PHIM
+========================= -->
+
+<main class="detail-page">
+
+    <div class="detail-container">
+
+        <!-- POSTER -->
+        <div class="detail-poster-box">
+
+            {% if series.poster_url %}
+                <img
+                    src="{{ series.poster_url }}"
+                    alt="{{ series.title }}"
+                    class="detail-poster"
+                >
+            {% else %}
+                <div class="detail-no-poster">
+                    Không có poster
+                </div>
+            {% endif %}
+
+        </div>
+
+
+        <!-- THÔNG TIN PHIM -->
+        <div class="detail-content">
+
+            <h1 class="detail-title">
+                {{ series.title }}
+            </h1>
+
+
+            <!-- THÔNG TIN CƠ BẢN -->
+            <div class="detail-meta">
+
+                {% if series.release_date %}
+                    <div class="detail-meta-item">
+                        <span class="detail-label">Ngày phát hành:</span>
+
+                        {% if series.release_date %}
+                            <span>{{ series.release_date|date:"d/m/Y" }}</span>
+                        {% else %}
+                            <span>Chưa có thông tin</span>
+                        {% endif %}
                     </div>
                 {% endif %}
-            </div>
-            
-            <div class="info-box">
-                <h1>{{ series.title }}</h1>
-                <div class="views">Lượt xem: {{ series.views }}</div>
-                
-                <div class="desc">
-                    {% if series.description %}
-                        {{ series.description }}
-                    {% else %}
-                        Đang cập nhật nội dung...
-                    {% endif %}
+
+
+                <div class="detail-meta-item">
+                    <span class="detail-label">Đánh giá:</span>
+                    
+                    <span class=""rating-value">
+                        <span class="star-icon">★</span>
+                        <span>{{ series.rating}}/10</span>
+                    </span>
                 </div>
-                
-                {% if tap_1 %}
-                    <a href="{% url 'xem_phim' tap_1.id %}" class="btn-play-large">▶ XEM NGAY</a>
-                {% else %}
-                    <span class="btn-play-large btn-disabled">Chưa có tập nào</span>
+
+
+                {% if series.runtime_minutes %}
+                    <div class="detail-meta-item">
+                        <span class="detail-label">Thời lượng:</span>
+                        <span>{{ series.runtime_minutes }} phút</span>
+                    </div>
                 {% endif %}
+
+
+                {% if series.type %}
+                    <div class="detail-meta-item">
+                        <span class="detail-label">Loại:</span>
+                        <span>{{ series.type }}</span>
+                    </div>
+                {% endif %}
+
             </div>
+
+
+            <!-- THỂ LOẠI -->
+            {% if series.genres.all %}
+                <div class="detail-genres">
+
+                    <span class="detail-label">Thể loại:</span>
+
+                    {% for genre in series.genres.all %}
+                        <span class="genre-tag">
+                            {{ genre.name }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+
+
+            <!-- MÔ TẢ -->
+            <div class="detail-description">
+
+                <h2>Mô tả</h2>
+
+                {% if series.description %}
+                    <p>
+                        {{ series.description }}
+                    </p>
+                {% else %}
+                    <p>
+                        Đang cập nhật nội dung...
+                    </p>
+                {% endif %}
+
+            </div>
+
+
+            <!-- TRAILER -->
+            <div class="detail-trailer">
+
+                <h2>Trailer</h2>
+
+                {% if trailer_id %}
+
+                    <div class="youtube-player">
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ trailer_id }}?origin=http://127.0.0.1:8000"
+                            title="Trailer {{ series.title }}"
+                            frameborder="0"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+
+                {% else %}
+
+                    <p class="no-trailer">
+                        Phim này chưa có trailer.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+            <!-- =========================================
+                ONLINE / RẠP ĐANG CHIẾU
+            ========================================= -->
+
+            <div class="watch-options">
+
+                {% if online_links %}
+                    <a
+                        href="{{ online_links.0.link }}"
+                        class="watch-option-btn"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Xem Online
+                    </a>
+                {% endif %}
+
+                {% if theater_links %}
+                    <button
+                        type="button"
+                        class="watch-option-btn"
+                        id="theaterBtn"
+                    >
+                        Rạp đang chiếu
+                    </button>
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- =========================================
+                POPUP RẠP ĐANG CHIẾU
+            ========================================= -->
+
+            <div class="watch-modal" id="theaterModal">
+
+                <div class="watch-modal-overlay"></div>
+
+                <div class="watch-modal-content">
+
+                    <button type="button" class="watch-modal-close" id="theaterClose">
+                        ×
+                    </button>
+
+                    <h2>Rạp đang chiếu</h2>
+
+                    <p class="watch-modal-description">
+                        Bạn có thể tìm phim tại:
+                    </p>
+
+                    <div class="watch-list">
+
+                        {% if series.theater_links.all %}
+
+                            {% for theater in theater_links %}
+                                <a
+                                    href="{{ theater.link }}"
+                                    class="watch-item"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {{ theater.theater_name }}
+                                </a>
+                            {% empty %}
+                                <p class="watch-empty">Hiện chưa có thông tin rạp.</p>
+                            {% endfor %}
+
+                        {% else %}
+
+                            <p class="watch-empty">
+                                Hiện chưa có thông tin rạp.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="episode-section">
-            <h2>Danh sách các tập</h2>
-            {% if danh_sach_tap %}
-                <div class="episode-grid">
-                    {% for tap in danh_sach_tap %}
-                        <a href="{% url 'xem_phim' tap.id %}" class="ep-btn">Tập {{ tap.tap_so }}</a>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <!-- Đã xóa inline style tĩnh ở đây và thay bằng class -->
-                <p class="empty-msg">Bộ phim này hiện chưa cập nhật video.</p>
-            {% endif %}
-        </div>
-    </main>
-    <script src="{% static 'js/BL_mode.js' %}"></script>
+    </div>
+
+</main>
+
+
+<script src="{% static 'js/BL_mode.js' %}"></script>
+<script src="{% static 'js/live_search.js' %}"></script>
+<script>
+
+    // =========================================
+    // POPUP RẠP ĐANG CHIẾU
+    // =========================================
+
+    const theaterBtn = document.getElementById("theaterBtn");
+    const theaterModal = document.getElementById("theaterModal");
+    const theaterClose = document.getElementById("theaterClose");
+
+
+    theaterBtn.addEventListener("click", function () {
+        theaterModal.classList.add("active");
+    });
+
+
+    theaterClose.addEventListener("click", function () {
+        theaterModal.classList.remove("active");
+    });
+
+
+    // =========================================
+    // CLICK RA NGOÀI POPUP ĐỂ ĐÓNG
+    // =========================================
+
+    document.querySelectorAll(".watch-modal-overlay").forEach(function (overlay) {
+
+        overlay.addEventListener("click", function () {
+
+            overlay.parentElement.classList.remove("active");
+
+        });
+
+    });
+
+
+    // =========================================
+    // NHẤN ESC ĐỂ ĐÓNG POPUP
+    // =========================================
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+
+            document.querySelectorAll(".watch-modal").forEach(function (modal) {
+
+                modal.classList.remove("active");
+
+            });
+
+        }
+
+    });
+</script>
 </body>
 </html>

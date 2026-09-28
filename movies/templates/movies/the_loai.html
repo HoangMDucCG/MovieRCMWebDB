@@ -5,7 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phim lẻ</title>
+
+    <title>{{ tieu_de_muc }}</title>
 
     <link rel="stylesheet" href="{% static 'movies/style.css' %}">
 </head>
@@ -51,7 +52,7 @@
 
                         <div class="dropdown-content">
                             {% for the_loai in categories %}
-                                <a href="{% url 'the_loai' %}?ten={{ the_loai.name }}">
+                                <a href="{% url 'the_loai' %}?ten={{ the_loai.name|urlencode }}">
                                     {{ the_loai.name }}
                                 </a>
                             {% endfor %}
@@ -85,7 +86,7 @@
     <main>
 
         <h2 style="margin-left: 20px; color: #f39c12; margin-top: 20px;">
-            Phim lẻ
+            {{ tieu_de_muc }}
         </h2>
 
         <div class="movie-list-container">
@@ -116,13 +117,18 @@
 
                     </div>
 
+                {% empty %}
+
+                    <p>Không có phim thuộc thể loại này.</p>
+
                 {% endfor %}
 
             </div>
         </div>
 
     </main>
-    <script src="{% static 'js/BL_mode.js' %}"></script>
     <script src="{% static 'js/live_search.js' %}"></script>
+    <script src="{% static 'js/BL_mode.js' %}"></script>
+
 </body>
 </html>

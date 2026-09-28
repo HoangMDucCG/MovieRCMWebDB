@@ -1,107 +1,772 @@
-.series-detail-container {
-    max-width: 1100px;
-    margin: 50px auto;
-    display: flex;
-    gap: 40px;
-    padding: 0 20px;
+/* =========================================
+   TRANG CHI TIẾT PHIM
+========================================= */
+
+.detail-page {
+    min-height: calc(100vh - 80px);
+    padding: 0;
 }
-.poster-box img {
-    width: 300px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
-.info-box {
-    flex: 1;
-}
-.info-box h1 {
-    color: var(--accent-color, #f39c12);
-    font-size: 36px;
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-.info-box .views { 
-    color: var(--text-muted); 
-    margin-bottom: 25px; 
-    font-size: 16px; 
-}
-.info-box .desc { 
-    font-size: 16px; 
-    line-height: 1.6; 
-    color: var(--text-main); 
-    margin-bottom: 40px; 
-}
-.btn-play-large {
-    display: inline-block;
-    background-color: #e50914;
-    color: white;
-    padding: 15px 35px;
-    font-size: 18px;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-.btn-play-large:hover { 
-    background-color: #b20710;
-}
-.btn-disabled {
-    background-color: #555;
-    cursor: not-allowed;
-}
-.episode-section {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-.episode-section h2 {
-    color: var(--accent-color, #f39c12);
-    border-bottom: 2px solid #333;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-.episode-grid {
+
+
+/* =========================================
+   LAYOUT CHÍNH
+========================================= */
+
+.detail-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 15px;
+
+    grid-template-columns: auto 1fr;
+
+    height: calc(100vh - 80px);
+
+    width: 100%;
+
+    margin: 0;
+
+    gap: 0;
+
+    align-items: stretch;
+
+    overflow: hidden;
 }
-.ep-btn {
-    background-color: #2b2b2b;
-    color: white;
-    padding: 12px;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: 0.2s;
+
+
+/* =========================================
+   KHU VỰC POSTER
+========================================= */
+
+.detail-poster-box {
+    height: calc(100vh - 80px);
+
+    width: auto;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
 }
-.ep-btn:hover {
-    background-color: var(--accent-color, #f39c12);
-    color: #141414;
+
+
+/* =========================================
+   POSTER
+========================================= */
+
+.detail-poster {
+    display: block;
+
+    /*
+       Lấy chiều cao làm chuẩn.
+       Chiều rộng tự tính theo tỷ lệ ảnh.
+    */
+    height: calc(100vh - 80px);
+
+    width: auto;
+
+    max-width: none;
+
+    object-fit: contain;
+
+    object-position: left center;
+
+    border-radius: 0;
+
+    box-shadow: none;
 }
-.empty-msg {
+
+
+/* =========================================
+   FADE TỪ TRÁI → PHẢI
+========================================= */
+
+.detail-poster-box::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    right: 0;
+
+    width: 55%;
+
+    pointer-events: none;
+
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(18, 18, 18, 0.15) 20%,
+        rgba(18, 18, 18, 0.55) 55%,
+        var(--bg-main) 100%
+    );
+}
+
+
+/* =========================================
+   KHÔNG CÓ POSTER
+========================================= */
+
+.detail-no-poster {
+    width: 400px;
+
+    height: calc(100vh - 80px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background-color: var(--bg-card);
+
     color: var(--text-muted);
 }
 
+
 /* =========================================
-   GHI ĐÈ GIAO DIỆN LIGHT MODE
-   ========================================= */
+   THÔNG TIN PHIM
+========================================= */
 
-body.light-mode .episode-section h2 {
-    border-bottom: 2px solid #ddd;
+.detail-content {
+    padding: 40px 60px 60px 40px;
+
+    position: relative;
+
+    z-index: 2;
+
+    min-width: 0;
+
+    height: 100%;
+
+    /*
+       Chỉ phần thông tin bên phải được cuộn
+    */
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    align-self: stretch;
 }
 
-body.light-mode .ep-btn {
-    background-color: #e4e4e4;
-    color: var(--text-main, #121212);
-    border: 1px solid #ccc;
+/* =========================================
+   THANH CUỘN PHẦN THÔNG TIN
+========================================= */
+
+.detail-content::-webkit-scrollbar {
+    width: 6px;
 }
 
-body.light-mode .ep-btn:hover {
-    background-color: var(--accent-color, #e67e22);
-    color: #ffffff;
-    border-color: var(--accent-color, #e67e22);
+.detail-content::-webkit-scrollbar-track {
+    background: transparent;
 }
-body.light-mode .info-box .views {
-    color: #444444 !important;
-    font-weight: 500;
+
+.detail-content::-webkit-scrollbar-thumb {
+    background: #555;
+
+    border-radius: 10px;
+}
+
+.detail-content::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}
+
+.detail-content {
+    scrollbar-width: thin;
+    scrollbar-color: #555 transparent;
+}
+
+/* =========================================
+   TÊN PHIM
+========================================= */
+
+.detail-title {
+    font-size: 42px;
+
+    line-height: 1.2;
+
+    margin-bottom: 25px;
+
+    color: var(--text-main);
+}
+
+
+/* =========================================
+   THÔNG TIN CƠ BẢN
+========================================= */
+
+.detail-meta {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-bottom: 25px;
+
+    font-size: 16px;
+
+    color: var(--text-main);
+}
+
+
+.detail-meta-item {
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+}
+
+
+.detail-label {
+    font-weight: bold;
+
+    color: var(--accent-color);
+}
+
+
+/* =========================================
+   THỂ LOẠI
+========================================= */
+
+.detail-genres {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 30px;
+
+    color: var(--text-main);
+}
+
+
+.genre-tag {
+    display: inline-block;
+
+    padding: 6px 12px;
+
+    background-color: var(--bg-card);
+
+    border-radius: 15px;
+
+    font-size: 13px;
+
+    color: var(--text-main);
+}
+
+
+/* =========================================
+   MÔ TẢ
+========================================= */
+
+.detail-description {
+    margin-bottom: 35px;
+}
+
+
+.detail-description h2,
+.detail-trailer h2 {
+    font-size: 24px;
+
+    margin-bottom: 15px;
+
+    color: var(--accent-color);
+}
+
+
+.detail-description p {
+    font-size: 16px;
+
+    line-height: 1.8;
+
+    color: var(--text-main);
+}
+
+
+/* =========================================
+   TRAILER
+========================================= */
+
+.detail-trailer {
+    margin-top: 20px;
+}
+
+
+.trailer-link {
+    margin-top: 10px;
+}
+
+
+.trailer-link a {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    border-radius: 6px;
+
+    background-color: var(--accent-color);
+
+    color: white;
+
+    font-weight: bold;
+
+    transition: 0.3s;
+}
+
+
+.trailer-link a:hover {
+    opacity: 0.85;
+
+    transform: translateY(-2px);
+}
+
+
+.no-trailer {
+    color: var(--text-muted);
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   LIGHT MODE
+========================================= */
+
+body.light-mode .detail-poster-box::after {
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(244, 244, 244, 0.15) 20%,
+        rgba(244, 244, 244, 0.55) 55%,
+        var(--bg-main) 100%
+    );
+}
+
+
+body.light-mode .detail-description p {
+    color: #121212;
+}
+
+
+body.light-mode .detail-meta {
+    color: #121212;
+}
+
+
+body.light-mode .detail-genres {
+    color: #121212;
+}
+
+
+body.light-mode .genre-tag {
+    color: #121212;
+}
+
+
+/* =========================================
+   MÀN HÌNH NHỎ
+========================================= */
+
+@media (max-width: 900px) {
+
+    .detail-container {
+        /*
+           Vẫn giữ poster trái + thông tin phải.
+           KHÔNG chuyển thành 1 cột.
+        */
+        grid-template-columns: auto 1fr;
+    }
+
+
+    .detail-poster-box {
+        height: calc(100vh - 80px);
+    }
+
+
+    .detail-poster {
+        height: calc(100vh - 80px);
+
+        width: auto;
+    }
+
+
+    .detail-content {
+        padding: 30px 20px;
+    }
+
+
+    .detail-title {
+        font-size: 30px;
+    }
+
+
+    .detail-description p {
+        font-size: 15px;
+    }
+
+}
+
+
+/* =========================================
+   MÀN HÌNH RẤT NHỎ
+========================================= */
+
+@media (max-width: 600px) {
+
+    .detail-container {
+        grid-template-columns: 45% 55%;
+    }
+
+
+    .detail-poster {
+        height: auto;
+
+        width: 100%;
+
+        object-fit: contain;
+    }
+
+
+    .detail-poster-box {
+        height: auto;
+
+        min-height: 500px;
+    }
+
+
+    .detail-content {
+        padding: 25px 15px;
+    }
+
+
+    .detail-title {
+        font-size: 26px;
+    }
+
+}
+
+/* =========================================
+   RATING
+========================================= */
+
+.rating-value {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: var(--text-main);
+
+    font-weight: 600;
+}
+
+
+.star-icon {
+    color: #f5c518;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    text-shadow: 0 0 5px rgba(245, 197, 24, 0.25);
+}
+
+/* =========================================
+   YOUTUBE TRAILER
+========================================= */
+
+.youtube-player {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background-color: #000;
+}
+
+
+.youtube-player iframe {
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    display: block;
+}
+
+/* =========================================
+   NÚT XEM ONLINE / RẠP
+========================================= */
+
+.watch-options {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 30px;
+
+    margin-bottom: 30px;
+}
+
+
+.watch-option-btn {
+    padding: 12px 22px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background-color: var(--accent-color);
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+}
+
+
+.watch-option-btn:hover {
+    transform: translateY(-2px);
+
+    opacity: 0.85;
+}
+
+
+/* =========================================
+   POPUP
+========================================= */
+
+.watch-modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+/*
+   Khi popup được mở
+*/
+
+.watch-modal.active {
+    display: flex;
+}
+
+
+/* =========================================
+   NỀN TỐI PHÍA SAU POPUP
+========================================= */
+
+.watch-modal-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.7);
+
+    backdrop-filter: blur(3px);
+}
+
+
+/* =========================================
+   NỘI DUNG POPUP
+========================================= */
+
+.watch-modal-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: min(450px, 90%);
+
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    padding: 30px;
+
+    background-color: var(--bg-card);
+
+    color: var(--text-main);
+
+    border-radius: 12px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =========================================
+   TIÊU ĐỀ POPUP
+========================================= */
+
+.watch-modal-content h2 {
+    margin-bottom: 10px;
+
+    font-size: 24px;
+
+    color: var(--accent-color);
+}
+
+
+.watch-modal-description {
+    margin-bottom: 20px;
+
+    color: var(--text-muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   NÚT ĐÓNG
+========================================= */
+
+.watch-modal-close {
+    position: absolute;
+
+    top: 12px;
+
+    right: 15px;
+
+    width: 32px;
+
+    height: 32px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: var(--text-muted);
+
+    font-size: 28px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.watch-modal-close:hover {
+    background-color: #444;
+
+    color: white;
+}
+
+
+/* =========================================
+   DANH SÁCH NỀN TẢNG / RẠP
+========================================= */
+
+.watch-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.watch-item {
+    display: block;
+
+    padding: 13px 16px;
+
+    border-radius: 7px;
+
+    background-color: #333;
+
+    color: var(--text-main);
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+
+.watch-item:hover {
+    background-color: var(--accent-color);
+
+    color: white;
+
+    transform: translateX(4px);
+}
+
+
+/* =========================================
+   KHÔNG CÓ DỮ LIỆU
+========================================= */
+
+.watch-empty {
+    padding: 15px;
+
+    color: var(--text-muted);
+
+    text-align: center;
+}
+
+
+/* =========================================
+   LIGHT MODE
+========================================= */
+
+body.light-mode .watch-modal-content {
+    background-color: #ffffff;
+
+    color: #121212;
+}
+
+
+body.light-mode .watch-item {
+    background-color: #eeeeee;
+
+    color: #121212;
+}
+
+
+body.light-mode .watch-item:hover {
+    background-color: var(--accent-color);
+
+    color: white;
+}
+
+
+body.light-mode .watch-modal-close:hover {
+    background-color: #eeeeee;
+
+    color: #121212;
 }

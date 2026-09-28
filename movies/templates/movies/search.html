@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phim lẻ</title>
+    <title>PHIMMOI</title>
 
     <link rel="stylesheet" href="{% static 'movies/style.css' %}">
 </head>
@@ -82,45 +82,58 @@
         </div>
     </header>
 
-    <main>
+<main>
+        <!-- KHU VỰC TIÊU ĐỀ VÀ BỘ LỌC -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 20px 0 20px;">
+            
+            <h2 style="color: #f39c12;">
+                {% if query %}
+                    Kết quả tìm kiếm: "{{ query }}"
+                {% else %}
+                    Tất cả phim
+                {% endif %}
+            </h2>
+            
+            <!-- FORM BỘ LỌC THỂ LOẠI -->
+            <form method="GET" action="{% url 'search' %}" id="filter-form">
+                <!-- Giữ lại từ khóa tìm kiếm (nếu có) -->
+                <input type="hidden" name="q" value="{{ query }}">
+                
+                <select name="genre" onchange="document.getElementById('filter-form').submit();" 
+                        style="padding: 8px; border-radius: 5px; background-color: #333; color: white; border: 1px solid #555; cursor: pointer;">
+                    <option value="">-- Tất cả thể loại --</option>
+                    {% for the_loai in categories %}
+                        <option value="{{ the_loai.name }}" {% if selected_genre == the_loai.name %}selected{% endif %}>
+                            {{ the_loai.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+            
+        </div>
 
-        <h2 style="margin-left: 20px; color: #f39c12; margin-top: 20px;">
-            Phim lẻ
-        </h2>
-
+        <!-- KHU VỰC DANH SÁCH PHIM -->
         <div class="movie-list-container">
             <div class="movie-grid">
-
                 {% for movie in movies %}
-
                     <div class="movie-card">
-
-                        <a href="{% url 'xem_series' movie.id %}"
-                           style="text-decoration: none; color: inherit; display: block;">
-
-                            <img src="{{ movie.poster_url }}"
-                                 alt="{{ movie.title }}"
-                                 class="poster-img">
+                        <a href="{% url 'xem_series' movie.id %}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                            
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="poster-img">
 
                             <div class="movie-info">
-
                                 <h3>{{ movie.title }}</h3>
-
-                                <p style="color: #8b8c91; font-size: 14px;">
-                                    Rating: {{ movie.rating }}
-                                </p>
-
+                                <p class="views" style="color: #8b8c91; font-size: 14px; margin-top: auto;">Đánh giá: ⭐ {{ movie.rating }}</p>
                             </div>
 
                         </a>
-
                     </div>
-
+                <!-- Nếu không có phim nào phù hợp thì hiện dòng chữ dưới đây -->
+                {% empty %}
+                    
                 {% endfor %}
-
             </div>
         </div>
-
     </main>
     <script src="{% static 'js/BL_mode.js' %}"></script>
     <script src="{% static 'js/live_search.js' %}"></script>

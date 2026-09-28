@@ -16,10 +16,24 @@
                 <span class="logo-main">WEB</span><span class="logo-sub">PHIMMOI</span>
             </a>
         </div>
-        <form class="search-box" method="GET" action="{% url 'search' %}">
-            <span class="search-icon">SEARCH BOX: </span>
-            <input type="text" name="q" placeholder="Tìm phim...">
-        </form>
+        <!-- Bọc search-box vào một wrapper -->
+        <div class="search-wrapper" style="position: relative;">
+            <form class="search-box" method="GET" action="{% url 'search' %}">
+                <!-- Icon kính lúp SVG -->
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M10 2a8 8 0 016.32 12.9l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
+                </svg>
+                <input type="text" name="q" id="search-input" placeholder="Con vợ này muốn xem phim giề?" autocomplete="off">
+            </form>
+
+            <!-- Khung xổ xuống (Mặc định ẩn) -->
+            <div id="search-dropdown" class="search-dropdown" style="display: none;">
+                <div class="dropdown-header">Danh sách phim</div>
+                <div id="search-results-list">
+                    <!-- Dữ liệu từ JavaScript sẽ được nhúng vào đây -->
+                </div>
+            </div>
+        </div>
 
         <nav class="header-nav">
             <ul class="nav-list">
@@ -61,29 +75,153 @@
     </div>
     </header>
     <main>
-        {% if tieu_de_muc %}
+        
+<!-- KHU VỰC 1: PHIM ĐANG HOT -->
+<section class="phim-hot">
+    <h2>Phim Đang Hot 🔥</h2>
+    <div class="slider-container">
+        <!-- Nút Prev -->
+        <button class="slide-btn prev-btn" onclick="slide('hot-slider', -1)">&#10094;</button>
+        
+        <div class="movie-slider" id="hot-slider">
+            {% for movie in hot_movies %}
+            <div class="movie-card">
+                <a href="{% url 'xem_series' movie.id %}" style="text-decoration: none; color: inherit;">
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="poster-img">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p>Rating: {{ movie.rating }}</p>
+                </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        
+        <button class="slide-btn next-btn" onclick="slide('hot-slider', 1)">&#10095;</button>
+    </div>
+</section>
+
+<!-- KHU VỰC 2: PHIM SẮP CHIẾU -->
+<section class="phim-sap-chieu">
+    <h2>Phim Sắp Chiếu</h2>
+    <div class="slider-container">
+        <button class="slide-btn prev-btn" onclick="slide('upcoming-slider', -1)">&#10094;</button>
+        
+        <!-- ID đã được đổi thành upcoming-slider -->
+        <div class="movie-slider" id="upcoming-slider">
+            <!-- Đã đổi biến thành upcoming_movies -->
+            {% for movie in upcoming_movies %}
+            <div class="movie-card">
+                <a href="{% url 'xem_series' movie.id %}" style="text-decoration: none; color: inherit;">
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="poster-img">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <!-- Phim sắp chiếu thì hiển thị ngày chiếu thay vì Rating = 0.0 -->
+                    <p>Chiếu ngày: {{ movie.release_date|date:"d/m/Y" }}</p>
+                </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button class="slide-btn next-btn" onclick="slide('upcoming-slider', 1)">&#10095;</button>
+    </div>
+</section>
+
+<!-- KHU VỰC 3: PHIM MỚI CẬP NHẬT -->    
+<section class="phim-moi">
+    <h2>Phim Mới Cập Nhật</h2>
+    <div class="slider-container">
+        <button class="slide-btn prev-btn" onclick="slide('new-slider', -1)">&#10094;</button>
+        
+        <!-- ID đã được đổi thành new-slider -->
+        <div class="movie-slider" id="new-slider">
+            <!-- Đã đổi biến thành new_movies -->
+            {% for movie in new_movies %}
+            <div class="movie-card">
+                <a href="{% url 'xem_series' movie.id %}" style="text-decoration: none; color: inherit;">
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="poster-img">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p>Rating: {{ movie.rating }}</p>
+                </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button class="slide-btn next-btn" onclick="slide('new-slider', 1)">&#10095;</button>
+        
+    </div>
+</section>   
+
+    <script>
+    // 1. Hàm trượt khi bấm nút (Của bạn giữ nguyên)
+    function slide(sliderId, direction) {
+        const slider = document.getElementById(sliderId);
+        if (slider) {
+            slider.scrollBy({ left: 300 * direction, behavior: 'smooth' });
+        }
+    }
+
+    // 2. Thêm mới: Hàm kiểm tra lề để bật/tắt viền mờ
+    function updateFadeEdges() {
+        const sliders = document.querySelectorAll('.movie-slider');
+        
+        sliders.forEach(slider => {
+            const isAtStart = slider.scrollLeft <= 0;
+            const isAtEnd = Math.ceil(slider.scrollLeft + slider.clientWidth) >= slider.scrollWidth - 1;
+
+            if (isAtStart) {
+                slider.classList.add('at-start');
+                slider.classList.remove('at-end');
+            } else if (isAtEnd) {
+                slider.classList.add('at-end');
+                slider.classList.remove('at-start');
+            } else {
+                slider.classList.remove('at-start', 'at-end');
+            }
+        });
+    }
+
+    // 3. Thêm mới: Chạy kiểm tra ngay khi web tải xong và khi cuộn
+    document.addEventListener('DOMContentLoaded', () => {
+        updateFadeEdges(); // Chạy 1 lần đầu tiên để nhận diện lề trái
+        
+        // Lắng nghe sự kiện cuộn trên tất cả các thanh trượt
+        document.querySelectorAll('.movie-slider').forEach(slider => {
+            slider.addEventListener('scroll', updateFadeEdges);
+        });
+    });
+</script>
+
+        <!-- {% if tieu_de_muc %}
             <h2 style="margin-left: 20px; color: #f39c12; margin-top: 20px;">Phim thuộc thể loại: {{ tieu_de_muc }}</h2>
         {% endif %}
         <div class="movie-list-container">
             <div class="movie-grid">
             {% for movie in movies %}
                 <div class="movie-card">
-                <!-- Thẻ a bọc toàn bộ card, khi nhấn vào bất cứ đâu trong khung này cũng sẽ chuyển trang -->
-                <a href="{% url 'xem_series' movie.id %}" class="movie-card" style="text-decoration: none; color: inherit; display: block;">
+                 Thẻ a bọc toàn bộ card, khi nhấn vào bất cứ đâu trong khung này cũng sẽ chuyển trang 
+                <a href="{% url 'xem_series' movie.id %}" style="text-decoration: none; color: inherit;">
                     
-                    <img src="{{ movie.poster_image.url }}" alt="{{ movie.title }}" class="poster-img">
+                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="poster-img">
 
                     <div class="movie-info">
                         <h3>{{ movie.title }}</h3>
-                        <p>Lượt xem: {{ movie.views }}</p>
+                        <p>Rating: {{ movie.rating }}</p>
                     </div>
 
                 </a>
                 </div>
             {% endfor %}
             </div>
-        </div>  
+        </div> -->
     </main>
-    <script src="{% static 'js/BL_mode.js' %}"></script>
+    <script src="{% static 'js/BL_mode.js' %}"></script> 
+    <script src="{% static 'js/live_search.js' %}"></script>
+
+    
 </body>
 </html>
